@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 NULLABLE = {'blank': True, 'null': True}
 
 
-class USER(AbstractUser):
+class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True, verbose_name='email')
     phone = models.CharField(max_length=35, unique=True, verbose_name='phone_number', **NULLABLE)
