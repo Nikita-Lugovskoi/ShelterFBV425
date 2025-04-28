@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-
+# не всегда так можно делать
 NULLABLE = {'blank': True, 'null': True}
 
 
