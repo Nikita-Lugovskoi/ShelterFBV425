@@ -40,6 +40,7 @@ def dogs_list_view(request):
     }
     return render(request, 'dogs/dogs.html', context)
 
+
 # Create Read Update Delet (CRUD)
 def dog_create_view(request):
     if request.method == 'POST':
@@ -61,3 +62,31 @@ def dog_detail_view(request, pk):
         'title': dog_object
     }
     return render(request, 'dogs/detail.html', context=context)
+
+
+def dog_update_view(request, pk):
+    dog_object = get_object_or_404(Dog, pk=pk)
+    if request.method =="POST":
+        form = DogForm(request.POST, request.FILES, instance=dog_object)
+        if form.is_valid():
+            dog_object = form.save()
+            dog_object.save()
+            return HttpResponseRedirect(reverse('dogs:dog_deteil', args={pk: pk}))
+    context = {
+        'object': dog_object,
+        'title': 'Изменить собаку',
+        'form': DogForm(instance=dog_object)
+    }
+    return render(request, 'dogs/update.html', context=context)
+
+
+def dog_delete_view(request, pk):
+    dog_object = get_object_or_404(Dog, pk=pk)
+    if request.method =="POST":
+        dog_object.delete()
+        return HttpResponseRedirect(reverse('dogs:dogs_list'))
+    context = {
+        'object': dog_object,
+        'title': 'Удалить собаку'
+    }
+    return render(request, 'dogs/delete.html', context=context)
