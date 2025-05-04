@@ -2,7 +2,3 @@ mssql-django
 python-dotenv
 Pillow
 
-
-
-# для активации работы django
-django-admin startproject config .
