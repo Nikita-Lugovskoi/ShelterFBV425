@@ -20,7 +20,7 @@ class Dog(models.Model):
     birth_date = models.DateField(**NULLABLE, verbose_name='birth_date')
     
     def __str__(self):
-        return f'{self.name}, {self.breed}'
+        return f'{self.name} ({self.breed})'
     
     
     class Meta:
