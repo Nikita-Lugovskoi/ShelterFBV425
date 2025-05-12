@@ -1,3 +1,6 @@
+import random
+import string
+
 from django.shortcuts import render, reverse, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
@@ -5,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from users.forms import UserRegisterForm, UserLoginForm, UserUpdateForm, UserChangePasswordForm
+from users.services import send_register_email, send_new_password
 
 
 def user_register_view(request):
@@ -12,10 +16,10 @@ def user_register_view(request):
     if request.method == "POST":
         if form.is_valid():
             new_user = form.save() # создаем пользователя
-            print(new_user)
             print(form.cleaned_data['password'])
             new_user.set_password(form.cleaned_data['password']) # хэшируем пароль пользователя
             new_user.save() # сохраняем пользователя в базу
+            send_register_email(new_user.email)
             return HttpResponseRedirect(reverse('dogs:index'))
     context = {
         'title': 'Создать аккаунт',
@@ -96,3 +100,13 @@ def user_change_password_view(request):
 def user_logout_view(request):
     logout(request)
     return redirect('dogs:index')
+
+
+
+@login_required(login_url='users:user_login')
+def user_generate_new_password_view(request):
+    new_password = ''.join(random.sample((string.ascii_letters + string.digits), 12))
+    request.user.set_password(new_password)
+    request.user.save()
+    send_new_password(request.user.email, new_password)
+    return redirect(reverse('dogs:index'))
